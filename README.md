@@ -23,6 +23,7 @@
 ***Finally, we test our setup***
 
 8. <a href="#viewing-the-final-dashboard-result">Viewing the Final Dashboard Result</a>
+9. <a href="#setting-up-the-tablet">Setting Up The Tablet</a>
 
 
 ## Times Sensors
@@ -482,6 +483,50 @@ To make the view as Dark, which I personally prefer and based all text colouring
 Now if everything went perfect, then you should see the below view on your tablet
 
 ![final_dashboard](/screenshot/final_dashboard.jpg)
+
+## Setting Up The Tablet
+
+Last step is to make sure that the tablet has its screen stay-on while charging and having the Home Assistant dashboard on screen. To do so:
+
+- In the companion app, click on the 4-dashes on the top left corner
+- At the bottom, click on the "*Username*" to opne the *Profile* page
+- Scroll down, and make sure that *Automatically close connection* is enabled
+
+![profile](/screenshot/android/profile.png)
+
+- Again, click on the 4-dashes on the top left corner and click on the *Settings* 
+- Find the *Companion app* and click on it
+- Scroll down and make sure that the *Screen orientation* is set to _Landscape_
+- Make sure that *Keep screen on* is enabled
+
+![companion_app](/screenshot/android/companion_app.png)
+
+### TO MAKE SURE THAT THE TABLET DOES NOT TURN THE SCREEN ON, AS AN INTERNAL TABLED SETTINGS, YOU NEED TO FOLLOW THE BELOW. IT COULD BE NOT NEEDED ON SOME TABLET MODELS
+
+- Open the Android *Settings* and click on the *About phone* at the bottom of the list
+
+![companion_app](/screenshot/android/about_android.png)
+
+- Click on *Software information* and keep on clicking on the *Build number* for around 7-10 clics
+- Stop when you see that the _Developer mode_ is enabled
+
+![software_info_android](/screenshot/android/software_info_android.png)
+
+- Go back to the *Settings* screen, and at the bottom of the list, you will see *Developer options* below the *About phone* appered. Click on that
+
+![settings_dev_android](/screenshot/android/settings_dev_android.png)
+
+- Finally, scroll down and make sure that *Stay awake* is enabled
+
+![developer_options_android](/screenshot/android/developer_options_android.png)
+
+
+Now you should have your tablet in _ALWASY ON MODE_ with the prayers dashboard visible. Make sure you plug in the charger as well
+
+
+
+
+
 
 ## License
 This document guide is licensed under the CC0 1.0 Universal license. The terms of the license are detailed in [LICENSE](/LICENSE)
