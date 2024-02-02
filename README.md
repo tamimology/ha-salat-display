@@ -306,48 +306,48 @@ cards:
                     color: green;
                   {% endif %}
           - type: section
-                  - type: conditional
-                    conditions:
-                      - condition: state
-                        entity: sensor.hijri_weekday
-                        state_not: الجمعة
-                    row:
-                      entity: sensor.dhuhr_dst
-                      type: custom:multiple-entity-row
-                      name: الظهر
-                      secondary_info: Dhuhur
-                      format: time
-                      styles:
-                        width: 200px
-                        text-align: left
-                      card_mod:
-                        style: |
-                          :host {
-                            {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
-                              --card-mod-icon-color: green;
-                              color: green;
-                            {% endif %}
-                  - type: conditional
-                    conditions:
-                      - condition: state
-                        entity: sensor.hijri_weekday
-                        state: الجمعة
-                    row:
-                      entity: sensor.dhuhr_dst
-                      type: custom:multiple-entity-row
-                      name: الجمعة
-                      secondary_info: Juma'a
-                      format: time
-                      styles:
-                        width: 200px
-                        text-align: left
-                      card_mod:
-                        style: |
-                          :host {
-                            {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
-                              --card-mod-icon-color: green;
-                              color: green;
-                            {% endif %}
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.hijri_weekday
+                state_not: الجمعة
+            row:
+              entity: sensor.dhuhr_dst
+              type: custom:multiple-entity-row
+              name: الظهر
+              secondary_info: Dhuhur
+              format: time
+              styles:
+                width: 200px
+                text-align: left
+              card_mod:
+                style: |
+                  :host {
+                    {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+                      --card-mod-icon-color: green;
+                      color: green;
+                    {% endif %}
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.hijri_weekday
+                state: الجمعة
+            row:
+              entity: sensor.dhuhr_dst
+              type: custom:multiple-entity-row
+              name: الجمعة
+              secondary_info: Juma'a
+              format: time
+              styles:
+                width: 200px
+                text-align: left
+              card_mod:
+                style: |
+                  :host {
+                    {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+                      --card-mod-icon-color: green;
+                      color: green;
+                    {% endif %}
           - type: section
           - entity: sensor.islamic_prayer_times_asr_prayer
             type: custom:multiple-entity-row
