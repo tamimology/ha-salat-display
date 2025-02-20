@@ -161,7 +161,7 @@ The below front-end integrations were used, they can be installing from HACS.
 - [Multiple Entity Row](https://github.com/benct/lovelace-multiple-entity-row)
 - [Lovelace Clock Card](https://github.com/Villhellm/lovelace-clock-card)
 - [Simple Clock Card](https://github.com/fufar/simple-clock-card)
-- [card-mod](https://github.com/thomasloven/lovelace-card-mod)
+- [card-mod](https://github.com/thomasloven/lovelace-card-mod). Make sure it is not later than version 3.4.3 as any later version will break the design and colouring for now
 - [Template Entity Row](https://github.com/thomasloven/lovelace-template-entity-row)
 - [Google Dark Theme](https://github.com/JuanMTech/google_dark_theme)
 
@@ -190,21 +190,18 @@ cards:
         secondary_info: Day Light Saving
         icon: ' '
         show_state: false
-        card_mod:
-          style: |
-            :host {
-              {% if states("binary_sensor.dst")  == "on" %}
-                --card-mod-icon-color: green;
-                color: yellow;
-              {% else %}
-                --card-mod-icon-color: gray;
-                color: gray;
-              {% endif %}
     card_mod:
       style: |
         ha-card {
           font-size: 20px;
           text-align: center;
+          {% if states('binary_sensor.dst')  == 'on' %}
+            --card-mod-icon-color: green;
+            color: yellow;
+          {% else %}
+            --card-mod-icon-color: grey;
+            color: grey;
+          {% endif %}
         }
   - type: custom:simple-clock-card
     time_zone: Australia/Melbourne
