@@ -1,6 +1,6 @@
-# Home Assistant Prayers Times Display Screen
+# Home Assistant Prayer Times Display Screen
 
-#### **NOTE:** *WHEN WRITING THIS GUIDE, IT WAS BASED TO FIT A* '**LENOVO TAB3 7 ESSENTIAL**'. *ALL SETTINGS AND SIZES CAN BE ADJUSTED TO FIT YOUR TABLET ACCORDINGLY.*
+#### **NOTE:** *WHEN WRITING THIS GUIDE, IT WAS BASED TO FIT A* '**LENOVO Tab M8 HD 2nd Gen 8 inch **'. *ALL SETTINGS AND SIZES CAN BE ADJUSTED TO FIT YOUR TABLET ACCORDINGLY.*
 
 
 # Table of Contents
@@ -14,25 +14,26 @@
 5. <a href="#next-prayer-eta-sensor">Next Prayer ETA Sensor</a>
 
 
-***Second, we do the Lovelace cards designs***
+***Second, we do the Lovelace card designs***
 
 6. <a href="#installing-the-required-cards-integration">Installing the Required Cards Integration</a>
-7. <a href="#finalising-the-design">Finalising the Design</a>
+7. <a href="#daily-hadith-integration-setup">Daily Hadith Integration Setup</a>
+8. <a href="#finalising-the-design">Finalising the Design</a>
 
 
 ***Finally, we test our setup***
 
-8. <a href="#viewing-the-final-dashboard-result">Viewing the Final Dashboard Result</a>
-9. <a href="#setting-up-the-tablet">Setting Up The Tablet</a>
+9. <a href="#viewing-the-final-dashboard-result">Viewing the Final Dashboard Result</a>
+10. <a href="#setting-up-the-tablet">Setting Up The Tablet</a>
 
 
 ## Times Sensors
 
-Add the below times sensors in the `configuration.yaml` file
+Add the time sensors below in the `configuration.yaml` file
 
 ```
 sensor:
-# Time Seonsors - Parameters available at https://strftime.org/
+# Time Sensors - Parameters available at https://strftime.org/
   - platform: time_date
     display_options:
       - "time"
@@ -60,13 +61,13 @@ Search for the **Islamic Prayer Times** and enter the required parameters, as in
 ## Daylight Saving Sensor
 ##### The below is specifically for Melbourne/Australia, adjust according to your timezone
 
-In your `configuration.yaml`, add the below binary sensor to check for DST
+In your `configuration.yaml`, add the binary sensor below to check for DST
 
 ```
 template: 
 # DST Binary Sensor
-  #begins at 2am on the first Sunday in October
-  #ends at 2am on the first Sunday in April
+  #begins at 2 am on the first Sunday in October
+  #ends at 2 am on the first Sunday in April
   - trigger:
     - platform: time
       at: '02:10'
@@ -101,7 +102,7 @@ template:
 ```
 
 ## Hijri Date Sensors
-##### The below sensor will convert today's Gregorian date to Hijri date using the RESTful API
+##### The sensor below will convert today's Gregorian date to a Hijri date using the RESTful API
 
 In your `configuration.yaml`, add the below sensors to get the Hijri Date, Day, Arabic Weekday, Arabic Month and Hijra Year
 
@@ -125,8 +126,8 @@ rest:
 
 ## Next Prayer ETA Sensor
 
-In your `configuration.yaml`, add the below sensor to check for the Next Prayer ETA time
-##### This part to be added after the Daylight Saving Sensor, and ommit the `template:` line from it before adding it.
+In your `configuration.yaml`, add the sensor below to check for the Next Prayer ETA time
+##### This part is to be added after the Daylight Saving Sensor, and omit the `template:` line from it before adding it.
 
 ```
 template:
@@ -152,9 +153,9 @@ template:
 
 ## Installing the Required Cards Integration
 
-#### This step is REQUIRED in order to have the display as seen in the screenshot at the end of this guide
+#### This step is REQUIRED to have the display as seen in the screenshot at the end of this guide
 
-The below front-end integrations were used, they can be installing from HACS.
+The following front-end integrations were used; they can be installed from HACS.
 - [WallPanel](https://github.com/j-a-n/lovelace-wallpanel)
 - [Layout Card](https://github.com/thomasloven/lovelace-layout-card)
 - [Vertical Stack in Card](https://github.com/ofekashery/vertical-stack-in-card)
@@ -164,11 +165,22 @@ The below front-end integrations were used, they can be installing from HACS.
 - [card-mod](https://github.com/thomasloven/lovelace-card-mod). Make sure it is not later than version 3.4.3 as any later version will break the design and colouring for now
 - [Template Entity Row](https://github.com/thomasloven/lovelace-template-entity-row)
 - [Google Dark Theme](https://github.com/JuanMTech/google_dark_theme)
+- [Daily-Hadith](https://github.com/zubir2k/homeassistant-dailyhadith)
+
+## Daily Hadith Integration Setup
+
+#### Make sure the integration is installed from the above link via HACS
+To have a daily Hadith displayed on the screen, the corresponding integration has to be configured by following the steps below:
+
+1- Navigate to the Home Assistant Integrations page (Settings --> Devices & Services)
+2- Click the + ADD INTEGRATION button in the lower right-hand corner
+3- Search for Daily Hadith
+4- (OPTIONAL) Enter your API key from Sunnah.com. Leave empty if you have no API key and press Submit.
 
 ## Finalising the Design
 
-#### It is advisable to have a seperate user for this display, and make sure that it is not an admin, and can only be accessed through local network only.
-#### Also, I advise to have a seperate dashboard (name it '***prayers-dashboard***') and add a view in this dashboard (name it '***salat-times***') for this display which is visible only to the admin and the display user created. Make sure you choose the View type as `Horizontal (layout-card)` and add the below lines in the code area
+#### It is advisable to have a separate user for this display and make sure that it is not an admin and can only be accessed through the local network.
+#### Also, I advise having a separate dashboard (name it '***prayers-dashboard***') and adding a view in this dashboard (name it '***salat-times***') for this display, which is visible only to the admin and the display user created. Make sure you choose the View type as `Horizontal (layout-card)` and add the lines below in the code area
 
 ```
 width: 700
@@ -177,7 +189,7 @@ max_cols: 2
 
 ![view_config](/screenshot/view_config.png)
 
-Once you created the user with the recommeneded permissions, and had the dashboard visible to that user, enter the dashboards edit mode, add click on ***+ ADD CARD*** from the bottom right corner. Choose any card as there is no difference in fact. Now click on ***SHOW CODE EDITOR*** at the lower left corner. Delete whatever is there, and add the following
+Once you have created the user with the recommended permissions and had the dashboard visible to that user, enter the dashboard's edit mode and click on ***+ ADD CARD*** from the bottom right corner. Choose any card, as there is no difference in fact. Now click on ***SHOW CODE EDITOR*** at the lower left corner. Delete whatever is there, and add the following
 
 ```s
 type: custom:vertical-stack-in-card
@@ -192,11 +204,11 @@ cards:
         show_state: false
     card_mod:
       style: |
-        ha-card {
+        :host {
           font-size: 20px;
           text-align: center;
           {% if states('binary_sensor.dst')  == 'on' %}
-            --card-mod-icon-color: green;
+            --card-mod-icon-color: yellow;
             color: yellow;
           {% else %}
             --card-mod-icon-color: grey;
@@ -211,8 +223,8 @@ cards:
     font_size: 3rem
     paddingLeft_size: 32px
     paddingRight_size: 32px
-    paddingTop_size: 32px
-    paddingBottom_size: 32px
+    paddingTop_size: 8px
+    paddingBottom_size: 8px
   - type: custom:clock-card
     size: 250
     font_size: 20
@@ -243,13 +255,13 @@ cards:
     state_color: false
     card_mod:
       style: |
-        ha-card {
+        :host {
           font-size: 20px;
           text-align: center;
         }
 ```
 
-Repeate the above steps, but this time, add the following into the newly created card
+Repeat the above steps, but this time, add the following to the newly created card
 ```
 type: custom:vertical-stack-in-card
 cards:
@@ -265,7 +277,7 @@ cards:
             secondary_info: Fajr
             format: time
             styles:
-              width: 200px
+              width: 120px
               text-align: left
             tap_action:
               action: none
@@ -279,6 +291,9 @@ cards:
                   {% if states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp > now().timestamp() %}
                     --card-mod-icon-color: green;
                     color: green;
+                  {% else %}
+                    --card-mod-icon-color: light-grey;
+                    color: light-grey;
                   {% endif %}
           - type: section
           - entity: sensor.islamic_prayer_times_sunrise_time
@@ -287,7 +302,7 @@ cards:
             secondary_info: Sunrise
             format: time
             styles:
-              width: 200px
+              width: 120px
               text-align: left
             tap_action:
               action: none
@@ -301,6 +316,9 @@ cards:
                   {% if states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp %}
                     --card-mod-icon-color: green;
                     color: green;
+                  {% else %}
+                    --card-mod-icon-color: light-grey;
+                    color: light-grey;
                   {% endif %}
           - type: section
           - type: conditional
@@ -315,7 +333,7 @@ cards:
               secondary_info: Dhuhur
               format: time
               styles:
-                width: 200px
+                width: 120px
                 text-align: left
               card_mod:
                 style: |
@@ -323,6 +341,9 @@ cards:
                     {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
                       --card-mod-icon-color: green;
                       color: green;
+                    {% else %}
+                      --card-mod-icon-color: light-grey;
+                      color: light-grey;
                     {% endif %}
           - type: conditional
             conditions:
@@ -336,7 +357,7 @@ cards:
               secondary_info: Juma'a
               format: time
               styles:
-                width: 200px
+                width: 120px
                 text-align: left
               card_mod:
                 style: |
@@ -344,6 +365,9 @@ cards:
                     {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
                       --card-mod-icon-color: green;
                       color: green;
+                    {% else %}
+                      --card-mod-icon-color: light-grey;
+                      color: light-grey;
                     {% endif %}
           - type: section
           - entity: sensor.islamic_prayer_times_asr_prayer
@@ -352,7 +376,7 @@ cards:
             secondary_info: Asr
             format: time
             styles:
-              width: 200px
+              width: 120px
               text-align: left
             tap_action:
               action: none
@@ -366,6 +390,9 @@ cards:
                   {% if states("sensor.islamic_prayer_times_asr_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp  %}
                     --card-mod-icon-color: green;
                     color: green;
+                  {% else %}
+                    --card-mod-icon-color: light-grey;
+                    color: light-grey;
                   {% endif %}
           - type: section
           - entity: sensor.islamic_prayer_times_maghrib_prayer
@@ -374,7 +401,7 @@ cards:
             secondary_info: Maghrib
             format: time
             styles:
-              width: 200px
+              width: 120px
               text-align: left
             tap_action:
               action: none
@@ -388,6 +415,9 @@ cards:
                   {% if states("sensor.islamic_prayer_times_maghrib_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_asr_prayer")| as_timestamp %}
                     --card-mod-icon-color: green;
                     color: green;
+                  {% else %}
+                    --card-mod-icon-color: light-grey;
+                    color: light-grey;
                   {% endif %}
           - type: section
           - entity: sensor.islamic_prayer_times_isha_prayer
@@ -396,7 +426,7 @@ cards:
             secondary_info: Isha
             format: time
             styles:
-              width: 200px
+              width: 120px
               text-align: left
             tap_action:
               action: none
@@ -410,6 +440,9 @@ cards:
                   {% if states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_maghrib_prayer")| as_timestamp %}
                     --card-mod-icon-color: green;
                     color: green;
+                  {% else %}
+                    --card-mod-icon-color: light-grey;
+                    color: light-grey;
                   {% endif %}
           - type: section
           - entity: sensor.islamic_prayer_times_midnight_time
@@ -418,7 +451,7 @@ cards:
             secondary_info: Midnight
             format: time
             styles:
-              width: 200px
+              width: 120px
               text-align: left
             tap_action:
               action: none
@@ -432,12 +465,15 @@ cards:
                   {% if states("sensor.islamic_prayer_times_midnight_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp %}
                     --card-mod-icon-color: green;
                     color: green;
+                  {% else %}
+                    --card-mod-icon-color: light-grey;
+                    color: light-grey;
                   {% endif %}
           - type: section
         card_mod:
           style: |
             ha-card {
-              font-size: 180% 
+              font-size: 145% 
             }
   - type: entities
     entities:
@@ -464,13 +500,29 @@ cards:
           font-size: 20px;
           color: orange;
         }
-```
+- type: custom:vertical-stack-in-card
+  cards:
+    - type: markdown
+      content: |
+        {{ state_attr("sensor.daily_hadith", "arabic") }}
+      text_only: true
+      card_mod:
+        style: |
+          ha-card {
+            text-align: right;
+            font-size: 17px !important;
+            color: rgba(152, 255, 240, 1);
+            line-height: normal;
+          }
 
-Now, the last piece of code is to click on the three dots on the upper right corner, and choose ***{} Raw configuuration editor***.
+```
+#### Replace `{{ state_attr("sensor.daily_hadith", "arabic") }}` with `{{ state_attr("sensor.daily_hadith", "text") }}` to have it in English instead of Arabic, and adjust the size accordingly
+
+Now, the last piece of code is to click on the three dots in the upper right corner and choose ***{} Raw configuration editor***.
 
 ![edit_dashboard](/screenshot/edit-dashboard.png)
 
-On top of what you see, insert the below lines
+On top of what you see, insert the lines below
 
 ```
 wallpanel:
@@ -483,30 +535,30 @@ wallpanel:
   idle_time: 0
 ```
 
-### NOTE: If you needed to enter the edit mode after that, press F11 to exit fullscreen mode, and add `?edit=1` at the end of the Home Assistant instance url of this dashboard
+### NOTE: If you need to enter the edit mode after that, press F11 to exit fullscreen mode, and add `?edit=1` at the end of the Home Assistant instance URL of this dashboard
 
 ```https://192.168.1.100:8123/prayers-dashboard/salat-times?edit=1```
 
 ## Viewing the Final Dashboard Result
 
-#### This is the last step to make sure that nothing wrong is made during the setup, and have all integrations installed and working properly.
+#### This is the last step to make sure that nothing goes wrong during the setup and that all integrations are installed and working properly.
 
-Install the Home Assistant companion application, login using the user dedicated to this dashboard view, and enter the local ip address for Home Assistant rather than the domain.
+Install the Home Assistant companion application, log in using the user dedicated to this dashboard view, and enter the local IP address for Home Assistant rather than the domain.
 
 To make the view as Dark, which I personally prefer and based all text colouring accordingly, click on the User at the lower left corner, scroll down till you find ***Theme*** and choose ***Google Dark Theme***
 
 ![dark_theme](/screenshot/dark_theme.png)
 
 
-Now if everything went perfect, then you should see the below view on your tablet
+Now, if everything went perfectly, then you should see the view below on your tablet
 
 ![final_dashboard](/screenshot/final_dashboard.jpg)
 
 ## Setting Up The Tablet
 
-Last step is to make sure that the tablet has its screen stay-on while charging and having the Home Assistant dashboard on screen. To do so:
+The last step is to make sure that the tablet keeps its screen stay-on while charging and having the Home Assistant dashboard on screen. To do so:
 
-- In the companion app, click on the 4-dashes on the top left corner
+- In the companion app, click on the 4-dashes in the top left corner
 - At the bottom, click on the "*Username*" to opne the *Profile* page
 - Scroll down, and make sure that *Automatically close connection* is enabled
 
@@ -519,7 +571,7 @@ Last step is to make sure that the tablet has its screen stay-on while charging 
 
 ![companion_app](/screenshot/android/companion_app.png)
 
-### TO MAKE SURE THAT THE TABLET DOES NOT TURN THE SCREEN ON, AS AN INTERNAL TABLED SETTINGS, YOU NEED TO FOLLOW THE BELOW. IT COULD BE NOT NEEDED ON SOME TABLET MODELS
+### TO MAKE SURE THAT THE TABLET DOES NOT TURN THE SCREEN ON, AS AN INTERNAL TABLET SETTING, YOU NEED TO FOLLOW THE BELOW. IT MAY NOT BE NEEDED ON SOME TABLET MODELS
 
 - Open the Android *Settings* and click on the *About phone* at the bottom of the list
 
@@ -530,7 +582,7 @@ Last step is to make sure that the tablet has its screen stay-on while charging 
 
 ![software_info_android](/screenshot/android/software_info_android.png)
 
-- Go back to the *Settings* screen, and at the bottom of the list, you will see *Developer options* below the *About phone* appered. Click on that
+- Go back to the *Settings* screen, and at the bottom of the list, you will see *Developer options* below the *About phone* section. Click on that
 
 ![settings_dev_android](/screenshot/android/settings_dev_android.png)
 
@@ -539,7 +591,7 @@ Last step is to make sure that the tablet has its screen stay-on while charging 
 ![developer_options_android](/screenshot/android/developer_options_android.png)
 
 
-Now you should have your tablet in _ALWASY ON MODE_ with the prayers dashboard visible. Make sure you plug in the charger as well
+Now you should have your tablet in _ALWAYSON MODE_ with the prayers dashboard visible. Make sure you plug in the charger as well
 
 
 
