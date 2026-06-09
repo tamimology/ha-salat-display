@@ -1,6 +1,6 @@
 # Home Assistant Prayer Times Display Screen
 
-#### **NOTE:** *WHEN WRITING THIS GUIDE, IT WAS BASED TO FIT A* '**LENOVO Tab M8 HD 2nd Gen 8 inch **'. *ALL SETTINGS AND SIZES CAN BE ADJUSTED TO FIT YOUR TABLET ACCORDINGLY.*
+#### **NOTE:** *WHEN WRITING THIS GUIDE, IT WAS BASED TO FIT A* '**LENOVO Tab M8 HD 2nd Gen 8 inch**'. *ALL SETTINGS AND SIZES CAN BE ADJUSTED TO FIT YOUR TABLET ACCORDINGLY.*
 
 
 # Table of Contents
@@ -162,7 +162,7 @@ The following front-end integrations were used; they can be installed from HACS.
 - [Multiple Entity Row](https://github.com/benct/lovelace-multiple-entity-row)
 - [Lovelace Clock Card](https://github.com/Villhellm/lovelace-clock-card)
 - [Simple Clock Card](https://github.com/fufar/simple-clock-card)
-- [card-mod](https://github.com/thomasloven/lovelace-card-mod). Make sure it is not later than version 3.4.3 as any later version will break the design and colouring for now
+- [card-mod](https://github.com/thomasloven/lovelace-card-mod)
 - [Template Entity Row](https://github.com/thomasloven/lovelace-template-entity-row)
 - [Google Dark Theme](https://github.com/JuanMTech/google_dark_theme)
 - [Daily-Hadith](https://github.com/zubir2k/homeassistant-dailyhadith)
