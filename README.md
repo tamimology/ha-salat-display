@@ -31,7 +31,7 @@
 
 Add the time sensors below in the `configuration.yaml` file
 
-```
+```yaml
 sensor:
 # Time Sensors - Parameters available at https://strftime.org/
   - platform: time_date
@@ -59,11 +59,11 @@ Search for the **Islamic Prayer Times** and enter the required parameters, as in
 
 
 ## Daylight Saving Sensor
-##### The below is specifically for Melbourne/Australia, adjust according to your timezone
+##### The following is specifically for Melbourne/Australia; adjust according to your timezone
 
 In your `configuration.yaml`, add the binary sensor below to check for DST
 
-```
+```yaml
 template: 
 # DST Binary Sensor
   #begins at 2 am on the first Sunday in October
@@ -104,9 +104,9 @@ template:
 ## Hijri Date Sensors
 ##### The sensor below will convert today's Gregorian date to a Hijri date using the RESTful API
 
-In your `configuration.yaml`, add the below sensors to get the Hijri Date, Day, Arabic Weekday, Arabic Month and Hijra Year
+In your `configuration.yaml`, add the sensors below to get the Hijri Date, Day, Arabic Weekday, Arabic Month and Hijra Year
 
-```
+```yaml
 rest: 
 # Gregorian to Hijri Date Converter
   - resource_template:  http://api.aladhan.com/v1/gToH/{{now().timestamp() | timestamp_custom('%d-%m-%Y')}}
@@ -129,7 +129,7 @@ rest:
 In your `configuration.yaml`, add the sensor below to check for the Next Prayer ETA time
 ##### This part is to be added after the Daylight Saving Sensor, and omit the `template:` line from it before adding it.
 
-```
+```yaml
 template:
 # Next Prayer ETA
   - trigger:
@@ -175,7 +175,7 @@ To have a daily Hadith displayed on the screen, the corresponding integration ha
 1- Navigate to the Home Assistant Integrations page (Settings --> Devices & Services)
 2- Click the + ADD INTEGRATION button in the lower right-hand corner
 3- Search for Daily Hadith
-4- (OPTIONAL) Enter your API key from Sunnah.com. Leave empty if you have no API key and press Submit.
+4- (OPTIONAL) Enter your API key from Sunnah.com. Leave it empty if you have no API key and press Submit.
 
 ## Finalising the Design
 
@@ -189,9 +189,9 @@ max_cols: 2
 
 ![view_config](/screenshot/view_config.png)
 
-Once you have created the user with the recommended permissions and had the dashboard visible to that user, enter the dashboard's edit mode and click on ***+ ADD CARD*** from the bottom right corner. Choose any card, as there is no difference in fact. Now click on ***SHOW CODE EDITOR*** at the lower left corner. Delete whatever is there, and add the following
+Once you have created the user with the recommended permissions and have the dashboard visible to that user, enter the dashboard's edit mode and click on ***+ ADD CARD*** from the bottom right corner. Choose any card, as there is no difference in fact. Now click on ***SHOW CODE EDITOR*** in the lower-left corner. Delete whatever is there and add the following
 
-```s
+```yaml
 type: custom:vertical-stack-in-card
 cards:
   - type: entities
@@ -262,7 +262,8 @@ cards:
 ```
 
 Repeat the above steps, but this time, add the following to the newly created card
-```
+
+```yaml
 type: custom:vertical-stack-in-card
 cards:
   - square: false
@@ -475,47 +476,52 @@ cards:
             ha-card {
               font-size: 145% 
             }
-  - type: entities
-    entities:
-      - type: custom:template-entity-row
-        name: الزمن المتبقي للصلاة
-        secondary: Next Prayer ETA
-        state: |
-          {% if states("sensor.next_prayer_eta")=="unavailable" %}
-            TBC
-          {% else %}
-            {{states("sensor.next_prayer_eta")}}
-          {% endif %}
-    state_color: false
-    tap_action:
-      action: none
-    hold_action:
-      action: none
-    double_tap_action:
-      action: none
+      - type: entities
+        entities:
+          - type: custom:template-entity-row
+            name: الزمن المتبقي للصلاة
+            secondary: Next Prayer ETA
+            state: |
+              {% if states("sensor.next_prayer_eta")=="unavailable" %}
+                TBC
+              {% else %}
+                {{states("sensor.next_prayer_eta")}}
+              {% endif %}
+        state_color: false
+        tap_action:
+          action: none
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        card_mod:
+          style: |
+            ha-card {
+              text-align: left;
+              font-size: 20px;
+              color: orange;
+            }
+```
+
+Repeat the above steps, but this time, add the following to the newly created card
+
+```yaml
+type: custom:vertical-stack-in-card
+cards:
+  - type: markdown
+    content: |
+      {{ state_attr("sensor.daily_hadith", "arabic") }}
+    text_only: true
     card_mod:
       style: |
         ha-card {
-          text-align: left;
-          font-size: 20px;
-          color: orange;
+          text-align: right;
+          font-size: 17px !important;
+          color: rgba(152, 255, 240, 1);
+          line-height: normal;
         }
-- type: custom:vertical-stack-in-card
-  cards:
-    - type: markdown
-      content: |
-        {{ state_attr("sensor.daily_hadith", "arabic") }}
-      text_only: true
-      card_mod:
-        style: |
-          ha-card {
-            text-align: right;
-            font-size: 17px !important;
-            color: rgba(152, 255, 240, 1);
-            line-height: normal;
-          }
-
 ```
+
 #### Replace `{{ state_attr("sensor.daily_hadith", "arabic") }}` with `{{ state_attr("sensor.daily_hadith", "text") }}` to have it in English instead of Arabic, and adjust the size accordingly
 
 Now, the last piece of code is to click on the three dots in the upper right corner and choose ***{} Raw configuration editor***.
@@ -524,7 +530,7 @@ Now, the last piece of code is to click on the three dots in the upper right cor
 
 On top of what you see, insert the lines below
 
-```
+```yaml
 wallpanel:
   enabled: true
   enabled_on_tabs:
@@ -535,9 +541,11 @@ wallpanel:
   idle_time: 0
 ```
 
-### NOTE: If you need to enter the edit mode after that, press F11 to exit fullscreen mode, and add `?edit=1` at the end of the Home Assistant instance URL of this dashboard
+### NOTE: If you need to enter edit mode after that, press F11 to exit fullscreen mode, and add `?edit=1` at the end of the Home Assistant instance URL of this dashboard
 
 ```https://192.168.1.100:8123/prayers-dashboard/salat-times?edit=1```
+
+## If you want to have the whole YAML configuration code in a single shot, you can find it <a href=https://github.com/tamimology/ha-salat-display/blob/main/full-config.yaml> here</a>. Just make sure you paste it after you enter the ***{} Raw configuration editor*** as mentioned above.
 
 ## Viewing the Final Dashboard Result
 
@@ -556,7 +564,7 @@ Now, if everything went perfectly, then you should see the view below on your ta
 
 ## Setting Up The Tablet
 
-The last step is to make sure that the tablet keeps its screen stay-on while charging and having the Home Assistant dashboard on screen. To do so:
+The last step is to make sure that the tablet keeps its screen on while charging and having the Home Assistant dashboard on screen. To do so:
 
 - In the companion app, click on the 4-dashes in the top left corner
 - At the bottom, click on the "*Username*" to opne the *Profile* page
@@ -564,7 +572,7 @@ The last step is to make sure that the tablet keeps its screen stay-on while cha
 
 ![profile](/screenshot/android/profile.png)
 
-- Again, click on the 4-dashes on the top left corner and click on the *Settings* 
+- Again, click on the 4 dashes in the top-left corner and click on the *Settings* 
 - Find the *Companion app* and click on it
 - Scroll down and make sure that the *Screen orientation* is set to _Landscape_
 - Make sure that *Keep screen on* is enabled
