@@ -11,8 +11,7 @@ views:
     path: salat-times
     icon: mdi:mosque
     visible:
-      - user: 963c86cfe7bf4ea1a1fb5ae5d6bc6640
-      - user: 7abafab41ec74c9280a3698d7111b2a8
+      - user: !!!!!!REPLACE BY SALAT-TIMES-USER-ID!!!!!!!
     type: panel
     layout:
       width: 700
@@ -28,27 +27,33 @@ views:
             cards:
               - type: custom:vertical-stack-in-card
                 cards:
-                  - type: entities
-                    entities:
-                      - entity: binary_sensor.dst
-                        type: custom:multiple-entity-row
+                  - square: false
+                    columns: 1
+                    type: grid
+                    cards:
+                      - type: custom:template-entity-row
                         name: توقيت صيفي
-                        secondary_info: Day Light Saving
-                        icon: ' '
-                        show_state: false
-                    card_mod:
-                      style: |
-                        :host {
-                          font-size: 20px;
-                          text-align: center;
-                          {% if states('binary_sensor.dst')  == 'on' %}
-                            --card-mod-icon-color: yellow;
-                            color: yellow;
-                          {% else %}
-                            --card-mod-icon-color: grey;
-                            color: grey;
-                          {% endif %}
-                        }
+                        secondary: Day Light Saving
+                        icon: " "
+                        state: " "
+                        card_mod:
+                          style: |
+                            :host {
+                              font-size: 14px;
+                              text-align: center;
+                              {% if is_state('binary_sensor.dst', 'on') %}
+                                --paper-item-icon-color: #fdd835;
+                                --card-mod-icon-color: #fdd835;
+                                color: #fdd835;
+                              {% else %}
+                                --paper-item-icon-color: #808080;
+                                --card-mod-icon-color: #808080;
+                                color: #808080;
+                              {% endif %}
+                            .card-content {
+                              text-align: center;
+                              justify-content: center;
+                            }
                   - type: custom:simple-clock-card
                     time_zone: Australia/Melbourne
                     use_military: true
@@ -75,8 +80,10 @@ views:
                       width: 400px
                       grid-row: 1
                       grid-column: 1
-                  - type: entities
-                    entities:
+                  - square: false
+                    columns: 1
+                    type: grid
+                    cards:
                       - type: custom:template-entity-row
                         name: |
                           {{states.sensor.hijri_weekday.state}}
@@ -84,15 +91,16 @@ views:
                           {{states.sensor.hijri_month.state}} 
                           {{states.sensor.hijri_year.state}}
                           هـ
-                        state: ''
-                    show_header_toggle: false
-                    state_color: false
-                    card_mod:
-                      style: |
-                        :host {
-                          font-size: 20px;
-                          text-align: center;
-                        }
+                        card_mod:
+                          style: |
+                            :host {
+                              display: flex;
+                              flex-direction: row-reverse;
+                              justify-content: center;
+                              text-align: center;
+                              font-size: 20px;
+                              direction: rtl;
+                            }
               - type: custom:vertical-stack-in-card
                 cards:
                   - square: false
@@ -106,9 +114,6 @@ views:
                             name: الفجر
                             secondary_info: Fajr
                             format: time
-                            styles:
-                              width: 120px
-                              text-align: left
                             tap_action:
                               action: none
                             hold_action:
@@ -118,12 +123,16 @@ views:
                             card_mod:
                               style: |
                                 :host {
+                                  font-size: 22px;
+                                  text-align: left
                                   {% if states("sensor.fajr_dst")| as_timestamp > now().timestamp() %}
-                                    --card-mod-icon-color: green;
-                                    color: green;
+                                    --paper-item-icon-color: #4caf50;
+                                    --card-mod-icon-color: #4caf50;
+                                    color: #4caf50;
                                   {% else %}
-                                    --card-mod-icon-color: light-grey;
-                                    color: light-grey;
+                                    --paper-item-icon-color: #808080;
+                                    --card-mod-icon-color: #808080;
+                                    color: #808080;
                                   {% endif %}
                                 }
                           - entity: sensor.sunrise_dst
@@ -131,18 +140,19 @@ views:
                             name: الشروق
                             secondary_info: Sunrise
                             format: time
-                            styles:
-                              width: 120px
-                              text-align: left
                             card_mod:
                               style: |
                                 :host {
+                                  font-size: 22px;
+                                  text-align: left
                                   {% if states("sensor.sunrise_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.fajr_dst")| as_timestamp %}
-                                    --card-mod-icon-color: green;
-                                    color: green;
+                                    --paper-item-icon-color: #4caf50;
+                                    --card-mod-icon-color: #4caf50;
+                                    color: #4caf50;
                                   {% else %}
-                                    --card-mod-icon-color: light-grey;
-                                    color: light-grey;
+                                    --paper-item-icon-color: #808080;
+                                    --card-mod-icon-color: #808080;
+                                    color: #808080;
                                   {% endif %}
                                 }
                           - type: conditional
@@ -156,18 +166,19 @@ views:
                               name: الظهر
                               secondary_info: Dhuhur
                               format: time
-                              styles:
-                                width: 120px
-                                text-align: left
                               card_mod:
                                 style: |
                                   :host {
+                                    font-size: 22px;
+                                    text-align: left
                                     {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
-                                      --card-mod-icon-color: green;
-                                      color: green;
+                                      --paper-item-icon-color: #4caf50;
+                                      --card-mod-icon-color: #4caf50;
+                                      color: #4caf50;
                                     {% else %}
-                                      --card-mod-icon-color: light-grey;
-                                      color: light-grey;
+                                      --paper-item-icon-color: #808080;
+                                      --card-mod-icon-color: #808080;
+                                      color: #808080;
                                     {% endif %}
                                   }
                           - type: conditional
@@ -181,18 +192,19 @@ views:
                               name: الجمعة
                               secondary_info: Juma'a
                               format: time
-                              styles:
-                                width: 120px
-                                text-align: left
                               card_mod:
                                 style: |
                                   :host {
+                                    font-size: 22px;
+                                    text-align: left
                                     {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
-                                      --card-mod-icon-color: green;
-                                      color: green;
+                                      --paper-item-icon-color: #4caf50;
+                                      --card-mod-icon-color: #4caf50;
+                                      color: #4caf50;
                                     {% else %}
-                                      --card-mod-icon-color: light-grey;
-                                      color: light-grey;
+                                      --paper-item-icon-color: #808080;
+                                      --card-mod-icon-color: #808080;
+                                      color: #808080;
                                     {% endif %}
                                   }
                           - entity: sensor.asr_dst
@@ -200,18 +212,19 @@ views:
                             name: العصر
                             secondary_info: Asr
                             format: time
-                            styles:
-                              width: 120px
-                              text-align: left
                             card_mod:
                               style: |
                                 :host {
+                                  font-size: 22px;
+                                  text-align: left
                                   {% if states("sensor.asr_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.dhuhr_dst")| as_timestamp  %}
-                                    --card-mod-icon-color: green;
-                                    color: green;
+                                    --paper-item-icon-color: #4caf50;
+                                    --card-mod-icon-color: #4caf50;
+                                    color: #4caf50;
                                   {% else %}
-                                    --card-mod-icon-color: light-grey;
-                                    color: light-grey;
+                                    --paper-item-icon-color: #808080;
+                                    --card-mod-icon-color: #808080;
+                                    color: #808080;
                                   {% endif %}
                                 }
                           - entity: sensor.maghreb_dst
@@ -219,18 +232,19 @@ views:
                             name: المغرب
                             secondary_info: Maghrib
                             format: time
-                            styles:
-                              width: 120px
-                              text-align: left
                             card_mod:
                               style: |
                                 :host {
-                                  {% if states("sensor.maghreb_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst")| as_timestamp %}
-                                    --card-mod-icon-color: green;
-                                    color: green;
+                                  font-size: 22px;
+                                  text-align: left
+                                  {% if states("sensor.maghreb_dst") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst") | as_timestamp %}
+                                    --paper-item-icon-color: #4caf50;
+                                    --card-mod-icon-color: #4caf50;
+                                    color: #4caf50;
                                   {% else %}
-                                    --card-mod-icon-color: light-grey;
-                                    color: light-grey;
+                                    --paper-item-icon-color: #808080;
+                                    --card-mod-icon-color: #808080;
+                                    color: #808080;
                                   {% endif %}
                                 }
                           - entity: sensor.isha_dst
@@ -238,18 +252,19 @@ views:
                             name: العشاء
                             secondary_info: Isha
                             format: time
-                            styles:
-                              width: 120px
-                              text-align: left
                             card_mod:
                               style: |
                                 :host {
+                                  font-size: 22px;
+                                  text-align: left
                                   {% if states("sensor.isha_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.maghreb_dst")| as_timestamp %}
-                                    --card-mod-icon-color: green;
-                                    color: green;
+                                    --paper-item-icon-color: #4caf50;
+                                    --card-mod-icon-color: #4caf50;
+                                    color: #4caf50;
                                   {% else %}
-                                    --card-mod-icon-color: light-grey;
-                                    color: light-grey;
+                                    --paper-item-icon-color: #808080;
+                                    --card-mod-icon-color: #808080;
+                                    color: #808080;
                                   {% endif %}
                                 }
                           - entity: sensor.midnight_dst
@@ -257,110 +272,64 @@ views:
                             name: منتصف الليل
                             secondary_info: Midnight
                             format: time
-                            styles:
-                              width: 120px
-                              text-align: left
                             card_mod:
                               style: |
                                 :host {
+                                  font-size: 22px;
+                                  text-align: left
                                   {% if states("sensor.midnight_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.isha_dst")| as_timestamp %}
-                                    --card-mod-icon-color: green;
-                                    color: green;
+                                    --paper-item-icon-color: #4caf50;
+                                    --card-mod-icon-color: #4caf50;
+                                    color: #4caf50;
                                   {% else %}
-                                    --card-mod-icon-color: light-grey;
-                                    color: light-grey;
+                                    --paper-item-icon-color: #808080;
+                                    --card-mod-icon-color: #808080;
+                                    color: #808080;
                                   {% endif %}
                                 }
-                        card_mod:
-                          style: |
-                            ha-card {
-                              font-size: 145% 
-                            }
-                      - type: entities
-                        entities:
-                          - type: custom:template-entity-row
-                            name: الزمن المتبقي للصلاة
-                            secondary: Next Prayer ETA
-                            state: >
-                              {% if
-                              states("sensor.next_prayer_eta")=="unavailable" %}
-                                TBC
-                              {% else %}
-                                {{states("sensor.next_prayer_eta")}}
-                              {% endif %}
-                            tap_action:
-                              action: call-service
-                              service: script.mute_unmute_speaker
-                              service_data:
-                                media_player: media_player.family_room_speaker
-                            state_color: false
-                        card_mod:
-                          style: |
-                            ha-card {
-                              text-align: left;
-                              font-size: 20px;
-                              color: orange;
-                            }
           - type: custom:vertical-stack-in-card
             cards:
-              - type: conditional
-                conditions:
-                  - condition: state
-                    entity: input_boolean.islamic_audio_playing
-                    state: 'off'
-                card:
-                  type: markdown
-                  content: |
-                    {{ state_attr("sensor.daily_hadith", "arabic") }}
-                  text_only: true
-                  card_mod:
-                    style: |
-                      ha-card {
-                        text-align: right;
-                        font-size: 17px !important;
-                        color: rgba(152, 255, 240, 1);
-                        line-height: normal;
-                      }
-              - type: conditional
-                conditions:
-                  - condition: state
-                    entity: input_boolean.islamic_audio_playing
-                    state: 'on'
-                card:
-                  type: custom:mini-media-player
-                  entity: media_player.home_speakers
-                  icon: mdi:speaker-multiple
-                  group: true
-                  hide:
-                    controls: true
-                    power: true
-                    mute: false
-                    volume: true
-                    volume_level: true
-                    runtime: false
-                    state_label: true
-                    info: true
-                    icon_state: false
-                    icon: true
-                  volume_stateless: false
-                  toggle_power: false
-                  artwork: none
-                  info: short
-                  name: ' '
-              - type: conditional
-                conditions:
-                  - condition: state
-                    entity: input_boolean.islamic_audio_playing
-                    state: 'on'
-                card:
-                  type: custom:template-entity-row
-                  name: |
-                    {{states('input_text.islamic_audio_playing')}}
-                  state: ' '
-            card_mod:
-              style: |
-                ha-card {
-                  text-align: center;
-                  font-size: 13px;
-                  color: pink;
-                }
+              - type: entities
+                show_header_toggle: false
+                state_color: false
+                entities:
+                  - type: custom:template-entity-row
+                    name: الزمن المتبقي للصلاة
+                    secondary: Next Prayer ETA
+                    state: |
+                      {% if states("sensor.next_prayer_eta")=="unavailable" %}
+                        TBC
+                      {% else %}
+                        {{states("sensor.next_prayer_eta")}}
+                      {% endif %}
+                    tap_action: none
+                    state_color: false
+                    card_mod:
+                      style: |
+                        :host {
+                          text-align: left;
+                          font-size: 20px;
+                          --paper-item-icon-color: #ff9800;
+                          --card-mod-icon-color: #ff9800;
+                          color: #ff9800;
+                        }
+              - type: custom:vertical-stack-in-card
+                cards:
+                  - type: markdown
+                    content: |
+                      {{ state_attr("sensor.daily_hadith", "arabic") }}
+                    text_only: true
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: transparent !important;
+                          border: none !important;
+                          box-shadow: none !important;
+                        }
+                        ha-markdown {
+                          text-align: right !important;
+                          direction: rtl !important;
+                          font-size: 17px !important;
+                          color: rgba(152, 255, 240, 1) !important;
+                          line-height: normal !important;
+                        }
