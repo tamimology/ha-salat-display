@@ -59,44 +59,23 @@ Search for the **Islamic Prayer Times** and enter the required parameters, as in
 
 
 ## Daylight Saving Sensor
-##### The following is specifically for Melbourne/Australia; adjust according to your timezone
+##### The following is provided by the timezone specified in the Home Assistant _configuration.yaml_ file. So, it will switch on and off automatically once the time comes for it
 
 In your `configuration.yaml`, add the binary sensor below to check for DST
 
 ```yaml
 template: 
-# DST Binary Sensor
-  #begins at 2 am on the first Sunday in October
-  #ends at 2 am on the first Sunday in April
   - trigger:
-    - platform: time
-      at: '02:10'
-    - platform: homeassistant
-      event: start
+      - trigger: time
+        at: "02:01:00"
+      - trigger: homeassistant
+        event: start
     binary_sensor:
       - name: "dst"
-        state: >
-            {% if now().isoweekday() == 7 and now().hour >= 2 and now().month == 10 and now().month != (now() - timedelta(days=7)).month %} 
-              {{ "on" }}
-            {% elif now().day in (1,2,3,4,5,6,7) and now().hour >= 2 and now().month == 10 and now().month != (now() - timedelta(days=7)).month %}
-              {{ "on" }}
-            {% elif now().hour >= 2 and now().month == 10 and now().month != (now() - timedelta(days=7)).month %}
-              {{ "off" }}
-            {% elif now().month in (10,11,12,1,2,3) %}
-              {{ "on" }}
-
-            {% elif now().isoweekday() == 7 and now().hour >= 2 and now().month == 4 and now().month != (now() - timedelta(days=7)).month %}
-              {{ "off" }}
-            {% elif now().day in (1,2,3,4,5,6,7) and now().hour >= 2 and now().month == 4 and now().month != (now() - timedelta(days=7)).month %}
-              {{ "off" }}
-            {% elif now().hour >= 2 and now().month == 4 and now().month != (now() - timedelta(days=7)).month %}
-              {{ "on" }}
-            {% elif now().month in (4,5,6,7,8,9) %}
-              {{ "off" }}
-            {% endif %}        
-        attributes: 
+        state: "{{ now().timetuple().tm_isdst == 1 }}"
+        attributes:
           value: >
-              {{ "0" }}
+            {{"0"}}
         icon: >
           mdi:timelapse
 ```
@@ -194,27 +173,33 @@ Once you have created the user with the recommended permissions and have the das
 ```yaml
 type: custom:vertical-stack-in-card
 cards:
-  - type: entities
-    entities:
-      - entity: binary_sensor.dst
-        type: custom:multiple-entity-row
+  - square: false
+    columns: 1
+    type: grid
+    cards:
+      - type: custom:template-entity-row
         name: توقيت صيفي
-        secondary_info: Day Light Saving
-        icon: ' '
-        show_state: false
-    card_mod:
-      style: |
-        :host {
-          font-size: 20px;
-          text-align: center;
-          {% if states('binary_sensor.dst')  == 'on' %}
-            --card-mod-icon-color: yellow;
-            color: yellow;
-          {% else %}
-            --card-mod-icon-color: grey;
-            color: grey;
-          {% endif %}
-        }
+        secondary: Day Light Saving
+        icon: " "
+        state: " "
+        card_mod:
+          style: |
+            :host {
+              font-size: 14px;
+              text-align: center;
+              {% if is_state('binary_sensor.dst', 'on') %}
+                --paper-item-icon-color: #fdd835;
+                --card-mod-icon-color: #fdd835;
+                color: #fdd835;
+              {% else %}
+                --paper-item-icon-color: #808080;
+                --card-mod-icon-color: #808080;
+                color: #808080;
+              {% endif %}
+            .card-content {
+              text-align: center;
+              justify-content: center;
+            }
   - type: custom:simple-clock-card
     time_zone: Australia/Melbourne
     use_military: true
@@ -241,8 +226,10 @@ cards:
       width: 400px
       grid-row: 1
       grid-column: 1
-  - type: entities
-    entities:
+  - square: false
+    columns: 1
+    type: grid
+    cards:
       - type: custom:template-entity-row
         name: |
           {{states.sensor.hijri_weekday.state}}
@@ -250,15 +237,16 @@ cards:
           {{states.sensor.hijri_month.state}} 
           {{states.sensor.hijri_year.state}}
           هـ
-        state: ''
-    show_header_toggle: false
-    state_color: false
-    card_mod:
-      style: |
-        :host {
-          font-size: 20px;
-          text-align: center;
-        }
+        card_mod:
+          style: |
+            :host {
+              display: flex;
+              flex-direction: row-reverse;
+              justify-content: center;
+              text-align: center;
+              font-size: 20px;
+              direction: rtl;
+            }
 ```
 
 Repeat the above steps, but this time, add the following to the newly created card
@@ -272,14 +260,11 @@ cards:
     cards:
       - type: entities
         entities:
-          - entity: sensor.islamic_prayer_times_fajr_prayer
+          - entity: sensor.fajr_dst
             type: custom:multiple-entity-row
             name: الفجر
             secondary_info: Fajr
             format: time
-            styles:
-              width: 120px
-              text-align: left
             tap_action:
               action: none
             hold_action:
@@ -289,39 +274,38 @@ cards:
             card_mod:
               style: |
                 :host {
-                  {% if states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp > now().timestamp() %}
-                    --card-mod-icon-color: green;
-                    color: green;
+                  font-size: 22px;
+                  text-align: left
+                  {% if states("sensor.fajr_dst")| as_timestamp > now().timestamp() %}
+                    --paper-item-icon-color: #4caf50;
+                    --card-mod-icon-color: #4caf50;
+                    color: #4caf50;
                   {% else %}
-                    --card-mod-icon-color: light-grey;
-                    color: light-grey;
+                    --paper-item-icon-color: #808080;
+                    --card-mod-icon-color: #808080;
+                    color: #808080;
                   {% endif %}
-          - type: section
-          - entity: sensor.islamic_prayer_times_sunrise_time
+                }
+          - entity: sensor.sunrise_dst
             type: custom:multiple-entity-row
             name: الشروق
             secondary_info: Sunrise
             format: time
-            styles:
-              width: 120px
-              text-align: left
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            double_tap_action:
-              action: none
             card_mod:
               style: |
                 :host {
-                  {% if states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp %}
-                    --card-mod-icon-color: green;
-                    color: green;
+                  font-size: 22px;
+                  text-align: left
+                  {% if states("sensor.sunrise_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.fajr_dst")| as_timestamp %}
+                    --paper-item-icon-color: #4caf50;
+                    --card-mod-icon-color: #4caf50;
+                    color: #4caf50;
                   {% else %}
-                    --card-mod-icon-color: light-grey;
-                    color: light-grey;
+                    --paper-item-icon-color: #808080;
+                    --card-mod-icon-color: #808080;
+                    color: #808080;
                   {% endif %}
-          - type: section
+                }
           - type: conditional
             conditions:
               - condition: state
@@ -333,19 +317,21 @@ cards:
               name: الظهر
               secondary_info: Dhuhur
               format: time
-              styles:
-                width: 120px
-                text-align: left
               card_mod:
                 style: |
                   :host {
+                    font-size: 22px;
+                    text-align: left
                     {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
-                      --card-mod-icon-color: green;
-                      color: green;
+                      --paper-item-icon-color: #4caf50;
+                      --card-mod-icon-color: #4caf50;
+                      color: #4caf50;
                     {% else %}
-                      --card-mod-icon-color: light-grey;
-                      color: light-grey;
+                      --paper-item-icon-color: #808080;
+                      --card-mod-icon-color: #808080;
+                      color: #808080;
                     {% endif %}
+                  }
           - type: conditional
             conditions:
               - condition: state
@@ -357,153 +343,136 @@ cards:
               name: الجمعة
               secondary_info: Juma'a
               format: time
-              styles:
-                width: 120px
-                text-align: left
               card_mod:
                 style: |
                   :host {
+                    font-size: 22px;
+                    text-align: left
                     {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
-                      --card-mod-icon-color: green;
-                      color: green;
+                      --paper-item-icon-color: #4caf50;
+                      --card-mod-icon-color: #4caf50;
+                      color: #4caf50;
                     {% else %}
-                      --card-mod-icon-color: light-grey;
-                      color: light-grey;
+                      --paper-item-icon-color: #808080;
+                      --card-mod-icon-color: #808080;
+                      color: #808080;
                     {% endif %}
-          - type: section
-          - entity: sensor.islamic_prayer_times_asr_prayer
+                  }
+          - entity: sensor.asr_dst
             type: custom:multiple-entity-row
             name: العصر
             secondary_info: Asr
             format: time
-            styles:
-              width: 120px
-              text-align: left
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            double_tap_action:
-              action: none
             card_mod:
               style: |
                 :host {
-                  {% if states("sensor.islamic_prayer_times_asr_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp  %}
-                    --card-mod-icon-color: green;
-                    color: green;
+                  font-size: 22px;
+                  text-align: left
+                  {% if states("sensor.asr_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.dhuhr_dst")| as_timestamp  %}
+                    --paper-item-icon-color: #4caf50;
+                    --card-mod-icon-color: #4caf50;
+                    color: #4caf50;
                   {% else %}
-                    --card-mod-icon-color: light-grey;
-                    color: light-grey;
+                    --paper-item-icon-color: #808080;
+                    --card-mod-icon-color: #808080;
+                    color: #808080;
                   {% endif %}
-          - type: section
-          - entity: sensor.islamic_prayer_times_maghrib_prayer
+                }
+          - entity: sensor.maghreb_dst
             type: custom:multiple-entity-row
             name: المغرب
             secondary_info: Maghrib
             format: time
-            styles:
-              width: 120px
-              text-align: left
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            double_tap_action:
-              action: none
             card_mod:
               style: |
                 :host {
-                  {% if states("sensor.islamic_prayer_times_maghrib_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_asr_prayer")| as_timestamp %}
-                    --card-mod-icon-color: green;
-                    color: green;
+                  font-size: 22px;
+                  text-align: left
+                  {% if states("sensor.maghreb_dst") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst") | as_timestamp %}
+                    --paper-item-icon-color: #4caf50;
+                    --card-mod-icon-color: #4caf50;
+                    color: #4caf50;
                   {% else %}
-                    --card-mod-icon-color: light-grey;
-                    color: light-grey;
+                    --paper-item-icon-color: #808080;
+                    --card-mod-icon-color: #808080;
+                    color: #808080;
                   {% endif %}
-          - type: section
-          - entity: sensor.islamic_prayer_times_isha_prayer
+                }
+          - entity: sensor.isha_dst
             type: custom:multiple-entity-row
             name: العشاء
             secondary_info: Isha
             format: time
-            styles:
-              width: 120px
-              text-align: left
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            double_tap_action:
-              action: none
             card_mod:
               style: |
                 :host {
-                  {% if states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_maghrib_prayer")| as_timestamp %}
-                    --card-mod-icon-color: green;
-                    color: green;
+                  font-size: 22px;
+                  text-align: left
+                  {% if states("sensor.isha_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.maghreb_dst")| as_timestamp %}
+                    --paper-item-icon-color: #4caf50;
+                    --card-mod-icon-color: #4caf50;
+                    color: #4caf50;
                   {% else %}
-                    --card-mod-icon-color: light-grey;
-                    color: light-grey;
+                    --paper-item-icon-color: #808080;
+                    --card-mod-icon-color: #808080;
+                    color: #808080;
                   {% endif %}
-          - type: section
-          - entity: sensor.islamic_prayer_times_midnight_time
+                }
+          - entity: sensor.midnight_dst
             type: custom:multiple-entity-row
             name: منتصف الليل
             secondary_info: Midnight
             format: time
-            styles:
-              width: 120px
-              text-align: left
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            double_tap_action:
-              action: none
             card_mod:
               style: |
                 :host {
-                  {% if states("sensor.islamic_prayer_times_midnight_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp %}
-                    --card-mod-icon-color: green;
-                    color: green;
+                  font-size: 22px;
+                  text-align: left
+                  {% if states("sensor.midnight_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.isha_dst")| as_timestamp %}
+                    --paper-item-icon-color: #4caf50;
+                    --card-mod-icon-color: #4caf50;
+                    color: #4caf50;
                   {% else %}
-                    --card-mod-icon-color: light-grey;
-                    color: light-grey;
+                    --paper-item-icon-color: #808080;
+                    --card-mod-icon-color: #808080;
+                    color: #808080;
                   {% endif %}
-          - type: section
-        card_mod:
-          style: |
-            ha-card {
-              font-size: 145% 
-            }
-      - type: entities
-        entities:
-          - type: custom:template-entity-row
-            name: الزمن المتبقي للصلاة
-            secondary: Next Prayer ETA
-            state: |
-              {% if states("sensor.next_prayer_eta")=="unavailable" %}
-                TBC
-              {% else %}
-                {{states("sensor.next_prayer_eta")}}
-              {% endif %}
-        state_color: false
-        tap_action:
-          action: none
-        hold_action:
-          action: none
-        double_tap_action:
-          action: none
-        card_mod:
-          style: |
-            ha-card {
-              text-align: left;
-              font-size: 20px;
-              color: orange;
-            }
+                }
 ```
 
 Repeat the above steps, but this time, add the following to the newly created card
+
+```yaml
+type: custom:vertical-stack-in-card
+cards:
+  - type: entities
+    show_header_toggle: false
+    state_color: false
+    entities:
+      - type: custom:template-entity-row
+        name: الزمن المتبقي للصلاة
+        secondary: Next Prayer ETA
+        state: |
+          {% if states("sensor.next_prayer_eta")=="unavailable" %}
+            TBC
+          {% else %}
+            {{states("sensor.next_prayer_eta")}}
+          {% endif %}
+        tap_action:
+          none
+        state_color: false
+        card_mod:
+          style: |
+            :host {
+              text-align: left;
+              font-size: 20px;
+              --paper-item-icon-color: #ff9800;
+              --card-mod-icon-color: #ff9800;
+              color: #ff9800;
+            }
+```
+
+And again, repeat the above steps, but this time, add the following to the newly created card
 
 ```yaml
 type: custom:vertical-stack-in-card
@@ -515,14 +484,21 @@ cards:
     card_mod:
       style: |
         ha-card {
-          text-align: right;
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+        ha-markdown {
+          text-align: right !important;
+          direction: rtl !important;
           font-size: 17px !important;
-          color: rgba(152, 255, 240, 1);
-          line-height: normal;
+          color: rgba(152, 255, 240, 1) !important;
+          line-height: normal !important;
         }
 ```
 
-#### Replace `{{ state_attr("sensor.daily_hadith", "arabic") }}` with `{{ state_attr("sensor.daily_hadith", "text") }}` to have it in English instead of Arabic, and adjust the size accordingly
+#### Replace `{{ state_attr("sensor.daily_hadith", "arabic") }}` with `{{ state_attr("sensor.daily_hadith", "text") }}` to have it in English instead of Arabic, and adjust the size accordingly. Also remove those 2 lines `text-align: right !important;`, and `direction: ltl !important;`
+
 
 Now, the last piece of code is to click on the three dots in the upper right corner and choose ***{} Raw configuration editor***.
 
@@ -566,7 +542,7 @@ Now, if everything went perfectly, then you should see the view below on your ta
 
 The last step is to make sure that the tablet keeps its screen on while charging and having the Home Assistant dashboard on screen. To do so:
 
-- In the companion app, click on the 4-dashes in the top left corner
+- In the companion app, click on the 4 dashes in the top left corner
 - At the bottom, click on the "*Username*" to opne the *Profile* page
 - Scroll down, and make sure that *Automatically close connection* is enabled
 
