@@ -54,16 +54,14 @@ views:
                               text-align: center;
                               justify-content: center;
                             }
-                  - type: custom:simple-clock-card
+                  - type: clock
+                    clock_style: digital
+                    clock_size: large
+                    time_format: '24'
+                    show_seconds: true
+                    no_background: true
+                    face_style: markers
                     time_zone: Australia/Melbourne
-                    use_military: true
-                    hide_seconds: false
-                    bold_clock: false
-                    font_size: 3rem
-                    paddingLeft_size: 32px
-                    paddingRight_size: 32px
-                    paddingTop_size: 8px
-                    paddingBottom_size: 8px
                   - type: custom:clock-card
                     size: 250
                     font_size: 20
@@ -86,10 +84,10 @@ views:
                     cards:
                       - type: custom:template-entity-row
                         name: |
-                          {{states.sensor.hijri_weekday.state}}
-                          {{states.sensor.hijri_day.state}}
-                          {{states.sensor.hijri_month.state}} 
-                          {{states.sensor.hijri_year.state}}
+                          {{ state_attr('sensor.hijri_date', 'weekday')['ar']}}
+                          {{ state_attr('sensor.hijri_date', 'day')}}
+                          {{ state_attr('sensor.hijri_date', 'month')['ar']}}
+                          {{ state_attr('sensor.hijri_date', 'year')}}
                           هـ
                         card_mod:
                           style: |
@@ -289,29 +287,44 @@ views:
                                 }
           - type: custom:vertical-stack-in-card
             cards:
-              - type: entities
-                show_header_toggle: false
-                state_color: false
-                entities:
+              - square: false
+                columns: 1
+                type: grid
+                cards:
                   - type: custom:template-entity-row
-                    name: الزمن المتبقي للصلاة
-                    secondary: Next Prayer ETA
+                    name: >
+                      صلاة
+                      {{state_attr('sensor.next_prayer_eta','next_prayer_ar')}}
+                      بعد
+                    secondary: >
+                      {{state_attr('sensor.next_prayer_eta','next_prayer_en')}}
+                      prayer in
                     state: |
                       {% if states("sensor.next_prayer_eta")=="unavailable" %}
                         TBC
                       {% else %}
-                        {{states("sensor.next_prayer_eta")}}
+                        {{state_attr('sensor.next_prayer_eta','next_eta')}}
                       {% endif %}
                     tap_action: none
-                    state_color: false
                     card_mod:
                       style: |
                         :host {
-                          text-align: left;
+                          display: flex !important;
+                          justify-content: center !important;
+                          align-items: center !important;
+                          text-align: center !important;
                           font-size: 20px;
                           --paper-item-icon-color: #ff9800;
                           --card-mod-icon-color: #ff9800;
                           color: #ff9800;
+                        }
+                        .info {
+                          flex: 0 1 auto !important;
+                          margin-left: 16px !important;
+                          margin-right: 16px !important;
+                        }
+                        .state {
+                          margin-left: 0px !important;
                         }
               - type: custom:vertical-stack-in-card
                 cards:
