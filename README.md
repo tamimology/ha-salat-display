@@ -88,19 +88,18 @@ In your `configuration.yaml`, add the sensors below to get the Hijri Date, Day, 
 ```yaml
 rest: 
 # Gregorian to Hijri Date Converter
-  - resource_template:  http://api.aladhan.com/v1/gToH/{{now().timestamp() | timestamp_custom('%d-%m-%Y')}}
-    scan_interval: 3600
+  - resource_template: "http://api.aladhan.com/v1/gToH?date={{ now().strftime('%d-%m-%Y') }}"
+    scan_interval: 43200
     sensor:
       - name: "Hijri Date"
-        value_template: "{{value_json.data.hijri.date}}"
-      - name: "Hijri Day"
-        value_template: "{{value_json.data.hijri.day}}"
-      - name: "Hijri Weekday"
-        value_template: "{{value_json.data.hijri.weekday.ar}}"
-      - name: "Hijri Month"
-        value_template: "{{value_json.data.hijri.month.ar}}"
-      - name: "Hijri Year"
-        value_template: "{{value_json.data.hijri.year}}"
+        unique_id: "a02ae836-85bd-4177-b999-0f54ed1fae01" # https://www.uuidgenerator.net/version4
+        value_template: "{{ value_json.data.hijri.date }}"
+        json_attributes_path: "$.data.hijri"
+        json_attributes:
+          - day
+          - month
+          - year
+          - weekday
 ```
 
 ## Next Prayer ETA Sensor
@@ -118,16 +117,63 @@ template:
       event: start
     sensor:
       - name: "Next Prayer ETA"
-        state: >
-          {% set ns = namespace(next = [])%}
-          {% set times = expand('sensor.islamic_prayer_times_fajr_prayer', 'sensor.islamic_prayer_times_dhuhr_prayer', 'sensor.islamic_prayer_times_asr_prayer', 'sensor.islamic_prayer_times_maghrib_prayer', 'sensor.islamic_prayer_times_isha_prayer') | sort(attribute = 'state',reverse = false) | map(attribute = 'state') | list %}
-          {% for t in times %}
-            {% if (t | as_datetime | as_local >= now()) %}
-              {% set ns.next = ns.next + [t] %}
-            {% endif %}
-          {% endfor %}
-           {{ (ns.next[0] | as_timestamp - now().timestamp()) | timestamp_custom('%-H hours %M minutes', local=false) }}
+        state: "-"
         icon: mdi:camera-timer
+        attributes: 
+          next_eta: >
+            {% set ns = namespace(next = []) %}
+            {% set times = expand('sensor.sunrise_dst', 'sensor.fajr_dst', 'sensor.dhuhr_dst', 'sensor.asr_dst', 'sensor.maghreb_dst', 'sensor.isha_dst') | sort(attribute = 'state') | map(attribute = 'state') | list %}
+            {% for t in times %}
+              {% set dt = t | as_datetime %}
+              {% if dt is not none and dt | as_local >= now() %}
+                {% set ns.next = ns.next + [dt] %}
+              {% endif %}
+            {% endfor %}
+            {% if ns.next | length > 0 %}
+              {{ (ns.next[0] | as_timestamp - now().timestamp() + 60) | timestamp_custom('%-H hours %M minutes', local=false) }}
+            {% else %}
+              TBC
+            {% endif %}
+          next_prayer_ar: >
+              {% if states("sensor.fajr_dst")| as_timestamp > now().timestamp() %}
+                {{'الفجر'}}
+              {% elif states("sensor.sunrise_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.fajr_dst")| as_timestamp %}
+                {{'الشروق'}}
+              {% elif states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+                  {% if now().weekday() in (4,) %}
+                    {{'الجمعة'}}
+                  {% else %}
+                    {{'الظهر'}}
+                  {% endif %}
+              {% elif states("sensor.asr_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.dhuhr_dst")| as_timestamp  %}
+                {{'العصر'}}
+              {% elif states("sensor.maghreb_dst") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst") | as_timestamp %}
+                {{'المغرب'}}
+              {% elif states("sensor.isha_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.maghreb_dst")| as_timestamp %}
+                {{'العشاء'}}
+              {% else %}
+                {{'الفجر'}}
+              {% endif %}
+          next_prayer_en: >
+              {% if states("sensor.fajr_dst")| as_timestamp > now().timestamp() %}
+                {{'Fajr'}}
+              {% elif states("sensor.sunrise_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.fajr_dst")| as_timestamp %}
+                {{'Sunrise'}}
+              {% elif states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+                  {% if now().weekday() in (4,) %}
+                    {{"Juma'a"}}
+                  {% else %}
+                    {{'Dhuhur'}}
+                  {% endif %}
+              {% elif states("sensor.asr_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.dhuhr_dst")| as_timestamp  %}
+                {{'Asr'}}
+              {% elif states("sensor.maghreb_dst") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst") | as_timestamp %}
+                {{'Maghrib'}}
+              {% elif states("sensor.isha_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.maghreb_dst")| as_timestamp %}
+                {{'Isha'}}
+              {% else %}
+                {{'Fajr'}}
+              {% endif %}
 ```
 
 ## Installing the Required Cards Integration
@@ -140,7 +186,6 @@ The following front-end integrations were used; they can be installed from HACS.
 - [Vertical Stack in Card](https://github.com/ofekashery/vertical-stack-in-card)
 - [Multiple Entity Row](https://github.com/benct/lovelace-multiple-entity-row)
 - [Lovelace Clock Card](https://github.com/Villhellm/lovelace-clock-card)
-- [Simple Clock Card](https://github.com/fufar/simple-clock-card)
 - [card-mod](https://github.com/thomasloven/lovelace-card-mod)
 - [Template Entity Row](https://github.com/thomasloven/lovelace-template-entity-row)
 - [Google Dark Theme](https://github.com/JuanMTech/google_dark_theme)
@@ -200,16 +245,14 @@ cards:
               text-align: center;
               justify-content: center;
             }
-  - type: custom:simple-clock-card
+  - type: clock
+    clock_style: digital
+    clock_size: large
+    time_format: '24'
+    show_seconds: true
+    no_background: true
+    face_style: markers
     time_zone: Australia/Melbourne
-    use_military: true
-    hide_seconds: false
-    bold_clock: false
-    font_size: 3rem
-    paddingLeft_size: 32px
-    paddingRight_size: 32px
-    paddingTop_size: 8px
-    paddingBottom_size: 8px
   - type: custom:clock-card
     size: 250
     font_size: 20
@@ -232,10 +275,10 @@ cards:
     cards:
       - type: custom:template-entity-row
         name: |
-          {{states.sensor.hijri_weekday.state}}
-          {{states.sensor.hijri_day.state}}
-          {{states.sensor.hijri_month.state}} 
-          {{states.sensor.hijri_year.state}}
+          {{ state_attr('sensor.hijri_date', 'weekday')['ar']}}
+          {{ state_attr('sensor.hijri_date', 'day')}}
+          {{ state_attr('sensor.hijri_date', 'month')['ar']}}
+          {{ state_attr('sensor.hijri_date', 'year')}}
           هـ
         card_mod:
           style: |
@@ -445,30 +488,43 @@ Repeat the above steps, but this time, add the following to the newly created ca
 ```yaml
 type: custom:vertical-stack-in-card
 cards:
-  - type: entities
-    show_header_toggle: false
-    state_color: false
-    entities:
+  - square: false
+    columns: 1
+    type: grid
+    cards:
       - type: custom:template-entity-row
-        name: الزمن المتبقي للصلاة
-        secondary: Next Prayer ETA
+        name: |
+          صلاة {{state_attr('sensor.next_prayer_eta','next_prayer_ar')}} بعد
+        secondary: >
+          {{state_attr('sensor.next_prayer_eta','next_prayer_en')}} prayer
+          in
         state: |
           {% if states("sensor.next_prayer_eta")=="unavailable" %}
             TBC
           {% else %}
-            {{states("sensor.next_prayer_eta")}}
+            {{state_attr('sensor.next_prayer_eta','next_eta')}}
           {% endif %}
         tap_action:
-          none
-        state_color: false
+            none
         card_mod:
           style: |
             :host {
-              text-align: left;
+              display: flex !important;
+              justify-content: center !important;
+              malign-items: center !important;
+              text-align: center !important;
               font-size: 20px;
               --paper-item-icon-color: #ff9800;
               --card-mod-icon-color: #ff9800;
               color: #ff9800;
+            }
+            .info {
+              flex: 0 1 auto !important;
+              margin-left: 16px !important;
+              margin-right: 16px !important;
+            }
+            .state {
+              margin-left: 0px !important;
             }
 ```
 
