@@ -107,7 +107,7 @@ views:
                     cards:
                       - type: entities
                         entities:
-                          - entity: sensor.fajr_dst
+                          - entity: sensor.islamic_prayer_times_fajr_prayer
                             type: custom:multiple-entity-row
                             name: الفجر
                             secondary_info: Fajr
@@ -123,7 +123,7 @@ views:
                                 :host {
                                   font-size: 22px;
                                   text-align: left
-                                  {% if states("sensor.fajr_dst")| as_timestamp > now().timestamp() %}
+                                  {% if states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp > now().timestamp() %}
                                     --paper-item-icon-color: #4caf50;
                                     --card-mod-icon-color: #4caf50;
                                     color: #4caf50;
@@ -133,7 +133,7 @@ views:
                                     color: #808080;
                                   {% endif %}
                                 }
-                          - entity: sensor.sunrise_dst
+                          - entity: sensor.islamic_prayer_times_sunrise_time
                             type: custom:multiple-entity-row
                             name: الشروق
                             secondary_info: Sunrise
@@ -143,7 +143,7 @@ views:
                                 :host {
                                   font-size: 22px;
                                   text-align: left
-                                  {% if states("sensor.sunrise_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.fajr_dst")| as_timestamp %}
+                                  {% if states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp %}
                                     --paper-item-icon-color: #4caf50;
                                     --card-mod-icon-color: #4caf50;
                                     color: #4caf50;
@@ -159,7 +159,7 @@ views:
                                 entity: sensor.hijri_weekday
                                 state_not: الجمعة
                             row:
-                              entity: sensor.dhuhr_dst
+                              entity: sensor.islamic_prayer_times_dhuhr_prayer
                               type: custom:multiple-entity-row
                               name: الظهر
                               secondary_info: Dhuhur
@@ -169,7 +169,7 @@ views:
                                   :host {
                                     font-size: 22px;
                                     text-align: left
-                                    {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+                                    {% if states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp %}
                                       --paper-item-icon-color: #4caf50;
                                       --card-mod-icon-color: #4caf50;
                                       color: #4caf50;
@@ -185,7 +185,7 @@ views:
                                 entity: sensor.hijri_weekday
                                 state: الجمعة
                             row:
-                              entity: sensor.dhuhr_dst
+                              entity: sensor.islamic_prayer_times_dhuhr_prayer
                               type: custom:multiple-entity-row
                               name: الجمعة
                               secondary_info: Juma'a
@@ -195,7 +195,7 @@ views:
                                   :host {
                                     font-size: 22px;
                                     text-align: left
-                                    {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+                                    {% if states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp %}
                                       --paper-item-icon-color: #4caf50;
                                       --card-mod-icon-color: #4caf50;
                                       color: #4caf50;
@@ -205,7 +205,7 @@ views:
                                       color: #808080;
                                     {% endif %}
                                   }
-                          - entity: sensor.asr_dst
+                          - entity: sensor.islamic_prayer_times_asr_prayer
                             type: custom:multiple-entity-row
                             name: العصر
                             secondary_info: Asr
@@ -215,7 +215,7 @@ views:
                                 :host {
                                   font-size: 22px;
                                   text-align: left
-                                  {% if states("sensor.asr_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.dhuhr_dst")| as_timestamp  %}
+                                  {% if states("sensor.islamic_prayer_times_asr_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp  %}
                                     --paper-item-icon-color: #4caf50;
                                     --card-mod-icon-color: #4caf50;
                                     color: #4caf50;
@@ -225,7 +225,7 @@ views:
                                     color: #808080;
                                   {% endif %}
                                 }
-                          - entity: sensor.maghreb_dst
+                          - entity: sensor.islamic_prayer_times_maghrib_prayer
                             type: custom:multiple-entity-row
                             name: المغرب
                             secondary_info: Maghrib
@@ -235,7 +235,7 @@ views:
                                 :host {
                                   font-size: 22px;
                                   text-align: left
-                                  {% if states("sensor.maghreb_dst") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst") | as_timestamp %}
+                                  {% if states("sensor.islamic_prayer_times_maghrib_prayer") | as_timestamp + 360 > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_asr_prayer") | as_timestamp %}
                                     --paper-item-icon-color: #4caf50;
                                     --card-mod-icon-color: #4caf50;
                                     color: #4caf50;
@@ -245,7 +245,7 @@ views:
                                     color: #808080;
                                   {% endif %}
                                 }
-                          - entity: sensor.isha_dst
+                          - entity: sensor.islamic_prayer_times_isha_prayer
                             type: custom:multiple-entity-row
                             name: العشاء
                             secondary_info: Isha
@@ -255,7 +255,7 @@ views:
                                 :host {
                                   font-size: 22px;
                                   text-align: left
-                                  {% if states("sensor.isha_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.maghreb_dst")| as_timestamp %}
+                                  {% if states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_maghrib_prayer")| as_timestamp + 360 %}
                                     --paper-item-icon-color: #4caf50;
                                     --card-mod-icon-color: #4caf50;
                                     color: #4caf50;
@@ -265,7 +265,7 @@ views:
                                     color: #808080;
                                   {% endif %}
                                 }
-                          - entity: sensor.midnight_dst
+                          - entity: sensor.islamic_prayer_times_midnight_time
                             type: custom:multiple-entity-row
                             name: منتصف الليل
                             secondary_info: Midnight
@@ -275,7 +275,7 @@ views:
                                 :host {
                                   font-size: 22px;
                                   text-align: left
-                                  {% if states("sensor.midnight_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.isha_dst")| as_timestamp %}
+                                  {% if states("sensor.islamic_prayer_times_midnight_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp %}
                                     --paper-item-icon-color: #4caf50;
                                     --card-mod-icon-color: #4caf50;
                                     color: #4caf50;
@@ -293,12 +293,21 @@ views:
                 cards:
                   - type: custom:template-entity-row
                     name: >
-                      صلاة
-                      {{state_attr('sensor.next_prayer_eta','next_prayer_ar')}}
-                      بعد
+                      {% if
+                      state_attr('sensor.next_prayer_eta','next_prayer_ar')=='الشروق'
+                      %}
+                        {{state_attr('sensor.next_prayer_eta','next_prayer_ar')}} بعد
+                      {% else %}
+                        صلاة {{state_attr('sensor.next_prayer_eta','next_prayer_ar')}} بعد
+                      {% endif %}
                     secondary: >
-                      {{state_attr('sensor.next_prayer_eta','next_prayer_en')}}
-                      prayer in
+                      {% if
+                      state_attr('sensor.next_prayer_eta','next_prayer_en')=='Sunrise'
+                      %}
+                        {{state_attr('sensor.next_prayer_eta','next_prayer_en')}} in
+                      {% else %}
+                        {{state_attr('sensor.next_prayer_eta','next_prayer_en')}} prayer
+                      in {% endif %}
                     state: |
                       {% if states("sensor.next_prayer_eta")=="unavailable" %}
                         TBC
