@@ -122,7 +122,7 @@ template:
         attributes: 
           next_eta: >
             {% set ns = namespace(next = []) %}
-            {% set times = expand('sensor.sunrise_dst', 'sensor.fajr_dst', 'sensor.dhuhr_dst', 'sensor.asr_dst', 'sensor.maghreb_dst', 'sensor.isha_dst') | sort(attribute = 'state') | map(attribute = 'state') | list %}
+            {% set times = expand('sensor.islamic_prayer_times_sunrise_time', 'sensor.islamic_prayer_times_fajr_prayer', 'sensor.islamic_prayer_times_dhuhr_prayer', 'sensor.islamic_prayer_times_asr_prayer', 'sensor.islamic_prayer_times_maghrib_prayer', 'sensor.islamic_prayer_times_isha_prayer') | sort(attribute = 'state') | map(attribute = 'state') | list %}
             {% for t in times %}
               {% set dt = t | as_datetime %}
               {% if dt is not none and dt | as_local >= now() %}
@@ -135,41 +135,41 @@ template:
               TBC
             {% endif %}
           next_prayer_ar: >
-              {% if states("sensor.fajr_dst")| as_timestamp > now().timestamp() %}
+              {% if states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp > now().timestamp() %}
                 {{'الفجر'}}
-              {% elif states("sensor.sunrise_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.fajr_dst")| as_timestamp %}
+              {% elif states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp %}
                 {{'الشروق'}}
-              {% elif states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+              {% elif states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp %}
                   {% if now().weekday() in (4,) %}
                     {{'الجمعة'}}
                   {% else %}
                     {{'الظهر'}}
                   {% endif %}
-              {% elif states("sensor.asr_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.dhuhr_dst")| as_timestamp  %}
+              {% elif states("sensor.islamic_prayer_times_asr_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp  %}
                 {{'العصر'}}
-              {% elif states("sensor.maghreb_dst") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst") | as_timestamp %}
+              {% elif states("sensor.islamic_prayer_times_maghrib_prayer") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_asr_prayer") | as_timestamp %}
                 {{'المغرب'}}
-              {% elif states("sensor.isha_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.maghreb_dst")| as_timestamp %}
+              {% elif states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_maghrib_prayer")| as_timestamp %}
                 {{'العشاء'}}
               {% else %}
                 {{'الفجر'}}
               {% endif %}
           next_prayer_en: >
-              {% if states("sensor.fajr_dst")| as_timestamp > now().timestamp() %}
+              {% if states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp > now().timestamp() %}
                 {{'Fajr'}}
-              {% elif states("sensor.sunrise_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.fajr_dst")| as_timestamp %}
+              {% elif states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp %}
                 {{'Sunrise'}}
-              {% elif states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+              {% elif states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp %}
                   {% if now().weekday() in (4,) %}
                     {{"Juma'a"}}
                   {% else %}
                     {{'Dhuhur'}}
                   {% endif %}
-              {% elif states("sensor.asr_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.dhuhr_dst")| as_timestamp  %}
+              {% elif states("sensor.islamic_prayer_times_asr_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp  %}
                 {{'Asr'}}
-              {% elif states("sensor.maghreb_dst") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst") | as_timestamp %}
+              {% elif states("sensor.islamic_prayer_times_maghrib_prayer") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_asr_prayer") | as_timestamp %}
                 {{'Maghrib'}}
-              {% elif states("sensor.isha_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.maghreb_dst")| as_timestamp %}
+              {% elif states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_maghrib_prayer")| as_timestamp %}
                 {{'Isha'}}
               {% else %}
                 {{'Fajr'}}
@@ -303,7 +303,7 @@ cards:
     cards:
       - type: entities
         entities:
-          - entity: sensor.fajr_dst
+          - entity: sensor.islamic_prayer_times_fajr_prayer
             type: custom:multiple-entity-row
             name: الفجر
             secondary_info: Fajr
@@ -319,7 +319,7 @@ cards:
                 :host {
                   font-size: 22px;
                   text-align: left
-                  {% if states("sensor.fajr_dst")| as_timestamp > now().timestamp() %}
+                  {% if states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp > now().timestamp() %}
                     --paper-item-icon-color: #4caf50;
                     --card-mod-icon-color: #4caf50;
                     color: #4caf50;
@@ -329,7 +329,7 @@ cards:
                     color: #808080;
                   {% endif %}
                 }
-          - entity: sensor.sunrise_dst
+          - entity: sensor.islamic_prayer_times_sunrise_time
             type: custom:multiple-entity-row
             name: الشروق
             secondary_info: Sunrise
@@ -339,7 +339,7 @@ cards:
                 :host {
                   font-size: 22px;
                   text-align: left
-                  {% if states("sensor.sunrise_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.fajr_dst")| as_timestamp %}
+                  {% if states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_fajr_prayer")| as_timestamp %}
                     --paper-item-icon-color: #4caf50;
                     --card-mod-icon-color: #4caf50;
                     color: #4caf50;
@@ -355,7 +355,7 @@ cards:
                 entity: sensor.hijri_weekday
                 state_not: الجمعة
             row:
-              entity: sensor.dhuhr_dst
+              entity: sensor.islamic_prayer_times_dhuhr_prayer
               type: custom:multiple-entity-row
               name: الظهر
               secondary_info: Dhuhur
@@ -365,7 +365,7 @@ cards:
                   :host {
                     font-size: 22px;
                     text-align: left
-                    {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+                    {% if states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp %}
                       --paper-item-icon-color: #4caf50;
                       --card-mod-icon-color: #4caf50;
                       color: #4caf50;
@@ -381,7 +381,7 @@ cards:
                 entity: sensor.hijri_weekday
                 state: الجمعة
             row:
-              entity: sensor.dhuhr_dst
+              entity: sensor.islamic_prayer_times_dhuhr_prayer
               type: custom:multiple-entity-row
               name: الجمعة
               secondary_info: Juma'a
@@ -391,7 +391,7 @@ cards:
                   :host {
                     font-size: 22px;
                     text-align: left
-                    {% if states("sensor.dhuhr_dst")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.sunrise_dst")| as_timestamp %}
+                    {% if states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp > now().timestamp() and now().timestamp() >  states("sensor.islamic_prayer_times_sunrise_time")| as_timestamp %}
                       --paper-item-icon-color: #4caf50;
                       --card-mod-icon-color: #4caf50;
                       color: #4caf50;
@@ -401,7 +401,7 @@ cards:
                       color: #808080;
                     {% endif %}
                   }
-          - entity: sensor.asr_dst
+          - entity: sensor.islamic_prayer_times_asr_prayer
             type: custom:multiple-entity-row
             name: العصر
             secondary_info: Asr
@@ -411,7 +411,7 @@ cards:
                 :host {
                   font-size: 22px;
                   text-align: left
-                  {% if states("sensor.asr_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.dhuhr_dst")| as_timestamp  %}
+                  {% if states("sensor.islamic_prayer_times_asr_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_dhuhr_prayer")| as_timestamp  %}
                     --paper-item-icon-color: #4caf50;
                     --card-mod-icon-color: #4caf50;
                     color: #4caf50;
@@ -421,7 +421,7 @@ cards:
                     color: #808080;
                   {% endif %}
                 }
-          - entity: sensor.maghreb_dst
+          - entity: sensor.islamic_prayer_times_maghrib_prayer
             type: custom:multiple-entity-row
             name: المغرب
             secondary_info: Maghrib
@@ -431,7 +431,7 @@ cards:
                 :host {
                   font-size: 22px;
                   text-align: left
-                  {% if states("sensor.maghreb_dst") | as_timestamp > now().timestamp() and now().timestamp() > states("sensor.asr_dst") | as_timestamp %}
+                  {% if states("sensor.islamic_prayer_times_maghrib_prayer") | as_timestamp + 360 > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_asr_prayer") | as_timestamp %}
                     --paper-item-icon-color: #4caf50;
                     --card-mod-icon-color: #4caf50;
                     color: #4caf50;
@@ -441,7 +441,7 @@ cards:
                     color: #808080;
                   {% endif %}
                 }
-          - entity: sensor.isha_dst
+          - entity: sensor.islamic_prayer_times_isha_prayer
             type: custom:multiple-entity-row
             name: العشاء
             secondary_info: Isha
@@ -451,7 +451,7 @@ cards:
                 :host {
                   font-size: 22px;
                   text-align: left
-                  {% if states("sensor.isha_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.maghreb_dst")| as_timestamp %}
+                  {% if states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_maghrib_prayer")| as_timestamp + 360 %}
                     --paper-item-icon-color: #4caf50;
                     --card-mod-icon-color: #4caf50;
                     color: #4caf50;
@@ -461,7 +461,7 @@ cards:
                     color: #808080;
                   {% endif %}
                 }
-          - entity: sensor.midnight_dst
+          - entity: sensor.islamic_prayer_times_midnight_time
             type: custom:multiple-entity-row
             name: منتصف الليل
             secondary_info: Midnight
@@ -471,7 +471,7 @@ cards:
                 :host {
                   font-size: 22px;
                   text-align: left
-                  {% if states("sensor.midnight_dst")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.isha_dst")| as_timestamp %}
+                  {% if states("sensor.islamic_prayer_times_midnight_time")| as_timestamp > now().timestamp() and now().timestamp() > states("sensor.islamic_prayer_times_isha_prayer")| as_timestamp %}
                     --paper-item-icon-color: #4caf50;
                     --card-mod-icon-color: #4caf50;
                     color: #4caf50;
@@ -494,10 +494,18 @@ cards:
     cards:
       - type: custom:template-entity-row
         name: |
-          صلاة {{state_attr('sensor.next_prayer_eta','next_prayer_ar')}} بعد
+          {% if state_attr('sensor.next_prayer_eta','next_prayer_ar')=='الشروق' %}
+            {{state_attr('sensor.next_prayer_eta','next_prayer_ar')}} بعد
+          {% else %}
+            صلاة {{state_attr('sensor.next_prayer_eta','next_prayer_ar')}} بعد
+          {% endif %}
         secondary: >
-          {{state_attr('sensor.next_prayer_eta','next_prayer_en')}} prayer
+          {% if state_attr('sensor.next_prayer_eta','next_prayer_en')=='Sunrise' %}
+            {{state_attr('sensor.next_prayer_eta','next_prayer_en')}} in
+          {% else %}
+            {{state_attr('sensor.next_prayer_eta','next_prayer_en')}} prayer
           in
+          {% endif %}
         state: |
           {% if states("sensor.next_prayer_eta")=="unavailable" %}
             TBC
